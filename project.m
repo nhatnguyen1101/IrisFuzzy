@@ -1,66 +1,66 @@
-% ??c d? li?u t? file iris.data
+% doc du lieu tu file iris.data
 fileID = fopen('iris.data', 'r');
 data = textscan(fileID, '%f%f%f%f%s', 'Delimiter', ',');
 
-% ?�ng file sau khi ??c
+% dong file sau khi doc
 fclose(fileID);
 
-% T�ch d? li?u s? v� d? li?u chu?i
+% Tách du lieu so và du lieu chuoi
 numericalData = cell2mat(data(1:4));
 
-% S? l??ng c?m mu?n ph�n chia
+% So luong cum muon phân chia
 num_clusters = 3;
 
-% Th?c hi?n ph�n c?m b?ng thu?t to�n Fuzzy C-Means
+% Thuc hien phân cum bang thuat toán Fuzzy C-Means
 [centers, U] = fcm(numericalData, num_clusters);
 
-% Hi?n th? trung t�m c?a c�c c?m
-disp('Trung t�m c?a c�c c?m:');
+% Hien thi trung tâm cua các cum
+disp('Trung tâm của các cụm:');
 disp(centers);
 
-% Hi?n th? ph�n b? c?a c�c ?i?m d? li?u trong t?ng c?m
+% Hien thi phân bố của các điểm dữ liệu trong từng cụm
 U = U.';
 [maxU, index] = max(U, [], 2);
-disp('Ph�n b? c?a c�c ?i?m d? li?u trong t?ng c?m:');
+disp('Phân bổ của các điểm dữ liệu trong từng cụm:');
 for i = 1:size(U, 1)
-    fprintf('?i?m %d thu?c v? c?m %d v?i ?? thu?c l� %f\n', i, index(i), maxU(i));
+    fprintf('Điểm %d thuộc vô cụm %d với độ thuộc là %f\n', i, index(i), maxU(i));
 end
 
-% ?�nh gi� k?t qu? b?ng c�ch t�nh to�n t?ng b�nh ph??ng sai s?
+% Đánh giá kết quả bằng cách tính toán tổng bình phương sai số
 total_variance = sum(sum((U.^2) .* pdist2(numericalData, centers).^2));
-fprintf('T?ng b�nh ph??ng sai s?: %f\n', total_variance);
+fprintf('Tổng bình phương sai số : %f\n', total_variance);
 
-% G�n m�u cho t?ng c?m
+% Gán màu cho từng cụm
 colors = ['r', 'g', 'b'];
 
-% M?ng ch?a t�n c�c thu?c t�nh
+% Mảng chứa tên các thuộc tính
 attributeNames = {'Sepal Length', 'Sepal Width', 'Petal Length', 'Petal Width'};
 
-% V? scatterplot cho t?ng c?p thu?c t�nh
+% Vẽ scatterplot cho từng cặp thuộc tính
 figure;
 for i = 1:4
     for j = 1:4
         if i == j
-            continue; % B? qua c?p thu?c t�nh tr�ng nhau
+            continue; % Bỏ qua cặp thuộc tính trùng nhau
         end
         
         subplot(4, 4, (i-1)*4 + j);
         hold on;
         
-        % V? c�c ?i?m d? li?u v� g�n m�u theo c?m
+        % Vẽ các Điểm dữ liệu và gán màu theo cụm
         for k = 1:size(U, 1)
             scatter(numericalData(k, i), numericalData(k, j), [], colors(index(k)), 'filled');
         end
         
-        % V? trung t�m c?a c�c c?m
+        % Vẽ trung tâm của các cụm
         for c = 1:num_clusters
             scatter(centers(c, i), centers(c, j), 'LineWidth', 2, 'MarkerEdgeColor', 'k', 'MarkerFaceColor', colors(c), 'Marker', 'o');
         end
-        % ??t t�n cho c�c tr?c
+        % Đặt tên cho các trục
         xlabel(attributeNames{i});
         ylabel(attributeNames{j});
         
-        % ??t gi?i h?n tr?c ?? ??m b?o c�ng t? l? tr�n t?t c? c�c scatterplot
+        % Đặt giới hạn trục để đảm bảo cùng tỷ lệ trên tất cả các scatterplot
         xlim([min(numericalData(:, i)) max(numericalData(:, i))]);
         ylim([min(numericalData(:, j)) max(numericalData(:, j))]);
         
